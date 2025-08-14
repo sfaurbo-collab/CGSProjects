@@ -272,4 +272,3 @@ int main()
 	}
 	}
 }
-	// Track the player’s progress using variables.
