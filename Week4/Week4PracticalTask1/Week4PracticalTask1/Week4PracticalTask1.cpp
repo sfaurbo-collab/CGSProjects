@@ -27,6 +27,12 @@ int main()
 	} while (input > 10 || input < 1);
 	cout << "The number you have entered is valid" << endl;
 
-
+	int third = 3;
+	
+	for (int i = 1; i <= 10; i++)
+	{
+		int result = i * third;
+		cout << result << ", ";
+	}
 
 }
