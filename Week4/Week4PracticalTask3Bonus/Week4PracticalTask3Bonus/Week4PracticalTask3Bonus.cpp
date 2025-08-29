@@ -13,3 +13,81 @@
 // Bonus Task: 
 //	- Modify the program to handle an array of 20 values.
 //	- Reuse the same functions to calculate the statistics for this larger array.
+
+using namespace std;
+
+int main()
+{
+	int data[20];
+
+	cout << "Please enter 20 numbers: ";
+	cin >> data[0];
+	cin >> data[1];
+	cin >> data[2];
+	cin >> data[3];
+	cin >> data[4];
+	cin >> data[5];
+	cin >> data[6];
+	cin >> data[7];
+	cin >> data[8];
+	cin >> data[9];
+	cin >> data[10];
+	cin >> data[11];
+	cin >> data[12];
+	cin >> data[13];
+	cin >> data[14];
+	cin >> data[15];
+	cin >> data[16];
+	cin >> data[17];
+	cin >> data[18];
+	cin >> data[19];
+	cout << endl;
+
+	cout << "These are the numbers you entered: " << endl;
+	for (int num : data)
+	{
+		cout << num << ", ";
+	}
+
+	float arraySum = 0.0f;
+	for (int i = 0; i < 20; ++i)
+	{
+		arraySum += data[i];
+	}
+	cout << "\n\nThe sum of the numbers you entered is: " << arraySum << endl;
+
+	float arrayAverage = arraySum / 20;
+	cout << "\nThe average of the numbers you entered is : " << arrayAverage << endl;
+
+	int minValue = numeric_limits<int>::max();
+	int maxValue = numeric_limits<int>::min();
+	for (int num : data)
+	{
+		if (num < minValue)
+		{
+			minValue = num;
+		}
+		if (num > maxValue)
+		{
+			maxValue = num;
+		}
+	}
+	cout << "\nThe lowest number you entered was: " << minValue << endl;
+	cout << "\nThe highest number you entered was: " << maxValue << endl;
+
+	int evenNumbers = 0;
+	int oddNumbers = 0;
+	for (int i = 0; i < 20; i++)
+	{
+		if (data[i] % 2 == 0)
+		{
+			evenNumbers++;
+		}
+		else
+		{
+			oddNumbers++;
+		}
+	}
+	cout << "\nThe number of even numbers that were entered is: " << evenNumbers << endl;
+	cout << "\nThe number of odd numbers that were entered is: " << oddNumbers << endl;
+}
