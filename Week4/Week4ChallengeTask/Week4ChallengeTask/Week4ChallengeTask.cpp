@@ -16,34 +16,33 @@ using namespace std;
 int main()
 {
     const int MAX_ROWS = 11;
-    const int MAX_COLS = 18;
+    const int MAX_COLS = 16;
     char maze[MAX_ROWS][MAX_COLS];
     int currentRow = 0;
     int currentColumn = 0;
-    
+
     ifstream render("Maze.txt");
-   
+    
     string line;
-    while (currentRow < MAX_ROWS && getline(render, line)) 
+    char theLine[MAX_COLS];
+
+    while (currentRow < MAX_ROWS) 
     {
-        if (line.length() < MAX_COLS) 
+        getline(render, line);
+        for (int j = 0; j < MAX_COLS; j++)
         {
-            strcpy_s(maze[currentRow], MAX_COLS, line.c_str());
-            currentRow++;
+            maze[currentRow][j] = line[j];
         }
-        else 
-        {
-            cerr << "Warning: Line too long, truncated or skipped." << endl;
-        }
+        currentRow++;
     }
 
-    for (int i = 0; i < 11; i++)
+    for (int i = 0; i < MAX_ROWS; i++)
     {
-        for (int j = 0; j < 18; j++)
+        for (int j = 0; j < MAX_COLS; j++)
         {
-            render >> maze[i][j];
-            cout << maze[i][j] << "\n";
+            cout << maze[i][j];
         }
+        cout << "\n";
     }
     render.close();
 }
