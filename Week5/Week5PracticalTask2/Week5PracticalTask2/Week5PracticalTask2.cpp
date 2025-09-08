@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 // Objective: Use string manipulation functions to reverse a sentence.
 // Write a program that :
@@ -34,11 +35,11 @@ int main()
 	std::getline(std::cin, sentence);
 
     std::vector<std::string> words = splitSentence(sentence);
+    
+    std::reverse(words.begin(), words.end());
 
     for (std::string w : words) 
     {
-        std::cout << w << std::endl;
+        std::cout << w << " ";
     }
-
-    return 0;
 }
