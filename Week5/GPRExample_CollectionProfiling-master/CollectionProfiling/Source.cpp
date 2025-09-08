@@ -11,11 +11,13 @@ const int NUM_ELEMENTS = 1000000;
 // Functions declarations
 void ProfileBackInsertVector(std::vector<int>& vec);
 
+
 // Functions Definitions
 int main()
 {
     std::vector<int> vec;
     ProfileBackInsertVector(vec);
+
     // TODO: Profile RandomAccessVector
 
     // TODO: Create list

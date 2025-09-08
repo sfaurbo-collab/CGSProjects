@@ -24,7 +24,7 @@ int main()
 
 	std::cout << randomNum << std::endl;
 
-	//insert the random number into the list 1o times
+	//insert the random number into the list 10 times
 
 	//???
 
@@ -54,5 +54,8 @@ int main()
 
 	//Print the list
 
-	std::cout << numbers << std::endl;
+	for (std::list<int>::iterator it = numbers->begin(); it != numbers->end(); ++it)
+	{
+		std::cout << *it << std::endl;
+	}
 }
