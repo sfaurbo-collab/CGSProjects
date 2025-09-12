@@ -18,7 +18,7 @@ int main()
     std::vector<int> vec;
     ProfileBackInsertVector(vec);
 
-    // TODO: Profile RandomAccessVector
+    // TODO: Profile RandomAccessVector (Pick 10 random numbers and get the average)
 
     // TODO: Create list
     std::list<int> newList;
@@ -38,7 +38,7 @@ int main()
     // TODO: ProfileFrontInsertDeque
     
     
-    // TODO: ProfileRandomAccessDeque
+    // TODO: ProfileRandomAccessDeque (Pick 10 random numbers and get the average)
 
     return 0;
 }

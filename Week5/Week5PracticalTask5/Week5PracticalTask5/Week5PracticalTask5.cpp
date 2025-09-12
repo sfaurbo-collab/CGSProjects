@@ -41,4 +41,8 @@ int main()
 
 	//Now I have to find the words in "dictionary" with starting letters corresponding to "anagram"
 	//Then I have to print out the results
+	//for loop to generate next word
+		//for loop comparing against the dictionary
+			//if the two words are the same print them out
+	//Bubble sort
 }

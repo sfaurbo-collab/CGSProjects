@@ -13,20 +13,25 @@
 
 int main()
 {
-	std::vector<int> numbers[10];
+	srand(time(0));
+	//srand(1); testing value
 	
-	for (int i = 0; i <= numbers->size(); i++)
-	{
-		srand(time(0));
+	//int test[5];
 
+	const int MAX_CAPACITY = 10;
+	std::vector<int> numbers;
+	numbers.reserve(MAX_CAPACITY);
+	
+	for (int i = 0; i < MAX_CAPACITY; i++)
+	{
 		int randomNum = rand() % 101;
 
-		numbers->push_back(randomNum);
+		numbers.push_back(randomNum);
 	}
 			
 	//??? what is going on here
 
-	for (std::vector<int>::iterator it = numbers->begin(); it != numbers->end(); ++it)
+	for (std::vector<int>::iterator it = numbers.begin(); it != numbers.end(); ++it)
 	{
 		std::cout << *it << " ";
 	}
