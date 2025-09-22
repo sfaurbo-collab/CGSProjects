@@ -77,12 +77,17 @@ public:
 		health = health + sanative;
 	}
 
+	void Work(int effort)
+	{
+		energy = energy - effort;
+	}
+
 	void Rest(int sleep)
 	{
 		energy = energy + sleep;
 	}
 
-	void DisplayInfo() //print the current state(name and health).
+	void DisplayInfo()
 	{
 		std::cout << "Player name: " << name << std::endl;
 		std::cout << "Player health: " << health << std::endl;
@@ -112,7 +117,7 @@ private:
 	int levelTenExp = 15000;
 
 public:
-
+	
 	Player()
 	{
 		experiencePoints = 0;
@@ -157,67 +162,67 @@ public:
 		if (experiencePoints < levelOneExp)
 		{
 			currentLevel = 0;
-			std::cout << "Current player Level: 0" << std::endl;
+			std::cout << "Current player Level: " << currentLevel << std::endl;
 			std::cout << std::endl;
 		}
 		else if (experiencePoints < levelTwoExp)
 		{
 			currentLevel = 1;
-			std::cout << "Current player Level: 1" << std::endl;
+			std::cout << "Current player Level: " << currentLevel << std::endl;
 			std::cout << std::endl;
 		}
 		else if (experiencePoints < levelThreeExp)
 		{
 			currentLevel = 2;
-			std::cout << "Current player Level: 2" << std::endl;
+			std::cout << "Current player Level: " << currentLevel << std::endl;
 			std::cout << std::endl;
 		}
 		else if (experiencePoints < levelFourExp)
 		{
 			currentLevel = 3;
-			std::cout << "Current player Level: 3" << std::endl;
+			std::cout << "Current player Level: " << currentLevel << std::endl;
 			std::cout << std::endl;
 		}
 		else if (experiencePoints < levelFiveExp)
 		{
 			currentLevel = 4;
-			std::cout << "Current player Level: 4" << std::endl;
+			std::cout << "Current player Level: " << currentLevel << std::endl;
 			std::cout << std::endl;
 		}
 		else if (experiencePoints < levelSixExp)
 		{
 			currentLevel = 5;
-			std::cout << "Current player Level: 5" << std::endl;
+			std::cout << "Current player Level: " << currentLevel << std::endl;
 			std::cout << std::endl;
 		}
 		else if (experiencePoints < levelSevenExp)
 		{
 			currentLevel = 6;
-			std::cout << "Current player Level: 6" << std::endl;
+			std::cout << "Current player Level: " << currentLevel << std::endl;
 			std::cout << std::endl;
 		}
 		else if (experiencePoints < levelEightExp)
 		{
 			currentLevel = 7;
-			std::cout << "Current player Level: 7" << std::endl;
+			std::cout << "Current player Level: " << currentLevel << std::endl;
 			std::cout << std::endl;
 		}
 		else if (experiencePoints < levelNineExp)
 		{
 			currentLevel = 8;
-			std::cout << "Current player Level: 8" << std::endl;
+			std::cout << "Current player Level: " << currentLevel << std::endl;
 			std::cout << std::endl;
 		}
 		else if (experiencePoints < levelTenExp)
 		{
 			currentLevel = 9;
-			std::cout << "Current player Level: 9" << std::endl;
+			std::cout << "Current player Level: " << currentLevel << std::endl;
 			std::cout << std::endl;
 		}
 		else if (experiencePoints > levelTenExp)
 		{
 			currentLevel = 10;
-			std::cout << "Current player Level: 10" << std::endl;
+			std::cout << "Current player Level: " << currentLevel << std::endl;
 			std::cout << std::endl;
 		}
 		else
@@ -232,13 +237,15 @@ public:
 		std::cout << "Player Name: " << &GameObject::getName << std::endl;
 		std::cout << "Player Health: " << &GameObject::getHealth << std::endl;
 		std::cout << "Player Energy: " << &GameObject::getEnergy << std::endl;
-		std::cout << "Total Experience Points: " << &Player::getExperiencePoints << std::endl;
-		std::cout << "Player Level: " << &Player::getCurrentLevel << std::endl;
+		std::cout << std::endl;
+		std::cout << "Total Experience Points: " << experiencePoints << std::endl;
+		std::cout << "Player Level: " << currentLevel << std::endl;
+		std::cout << std::endl;
 	}
 
 	~Player()
 	{
-		std::cout << "Object destroyed: " << &GameObject::getName << std::endl;
+		std::cout << "Experience and Level set to 0." << std::endl;
 	}
 };
 
@@ -248,8 +255,12 @@ int main()
 	player.setName("Steven");
 	player.setHealth(100);
 	player.setEnergy(125);
+	player.TakeDamage(25);
+	player.Heal(10);
+	player.Work(15);
+	player.Rest(5);
 	player.setExperiencePoints(0);
 	player.setCurrentLevel(0);
-	player.experience(10);
+	player.experience(250);
 	player.DisplayInfo();
 }
