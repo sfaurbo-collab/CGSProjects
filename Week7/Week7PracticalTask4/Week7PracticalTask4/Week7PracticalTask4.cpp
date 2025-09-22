@@ -234,10 +234,9 @@ public:
 
 	void DisplayInfo()
 	{
-		std::cout << "Player Name: " << &GameObject::getName << std::endl;
-		std::cout << "Player Health: " << &GameObject::getHealth << std::endl;
-		std::cout << "Player Energy: " << &GameObject::getEnergy << std::endl;
-		std::cout << std::endl;
+		std::cout << "Player Name: " << getName() << std::endl;
+		std::cout << "Player Health: " << getHealth() << std::endl;
+		std::cout << "Player Energy: " << getEnergy() << std::endl;
 		std::cout << "Total Experience Points: " << experiencePoints << std::endl;
 		std::cout << "Player Level: " << currentLevel << std::endl;
 		std::cout << std::endl;
