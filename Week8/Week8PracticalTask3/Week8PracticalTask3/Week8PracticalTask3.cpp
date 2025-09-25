@@ -1,3 +1,8 @@
+#include<iostream>
+#include<string>
+#include<vector>
+#include<memory>
+
 // Work with abstract classes and implement polymorphic behavior.
 //
 // Create an abstract base class GameObject with :
@@ -12,3 +17,49 @@
 //
 // Bonus Task :
 //	Add additional derived classes(e.g., Weapon or NPC) and demonstrate extensibility of abstract classes.
+
+class GameObject 
+{
+public:
+
+    virtual void Interact() = 0;
+    virtual ~GameObject() = default;
+};
+
+class Player : public GameObject
+{
+    void Interact() override
+    {
+        std::cout << "The player is interacting with The Game." << std::endl;
+    }
+};
+
+class Enemy : public GameObject
+{
+    void Interact() override
+    {
+        std::cout << "The enemy is interacting with the Player." << std::endl;
+    }
+};
+
+class Item : public GameObject
+{
+    void Interact() override
+    {
+        std::cout << "The item has been interacted with." << std::endl;
+    }
+};
+
+int main()
+{
+    std::vector<std::unique_ptr<GameObject>> gameObjects;
+
+    gameObjects.push_back(std::make_unique<Player>());
+    gameObjects.push_back(std::make_unique<Enemy>());
+    gameObjects.push_back(std::make_unique<Item>());
+
+    for (const auto& obj : gameObjects) 
+    {
+        obj->Interact();
+    }
+}

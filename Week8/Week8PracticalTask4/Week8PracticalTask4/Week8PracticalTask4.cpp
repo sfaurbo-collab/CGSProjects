@@ -1,3 +1,6 @@
+#include<iostream>
+#include<string>
+
 // Understand the complexities of multiple inheritance and virtual inheritance.
 //
 // Create a base class Shape with a pure virtual function Draw().
@@ -8,3 +11,12 @@
 // 
 // Bonus Task :
 //	Show the difference in behavior between regular inheritance and virtual inheritance in this example.Add a second base class (e.g., Position) and demonstrate the issue that occurs with regular inheritance vs. virtual inheritance.
+
+class Shape 
+{
+public:
+
+    virtual void Draw() = 0;
+
+    virtual ~Shape() {}
+};
