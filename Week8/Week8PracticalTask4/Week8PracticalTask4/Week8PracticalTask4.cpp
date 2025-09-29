@@ -20,3 +20,52 @@ public:
 
     virtual ~Shape() {}
 };
+
+class Circle : virtual public Shape
+{
+public:
+
+    void Draw() override
+    {
+        std::cout << "A circle is being drawn." << std::endl;
+    }
+};
+
+class Rectangle : virtual public Shape
+{
+public:
+
+    void Draw() override
+    {
+        std::cout << "A rectangle is being drawn." << std::endl;
+    }
+};
+
+class ColouredShape : public Circle, public Rectangle
+{
+public:
+    
+    std::string colour;
+    Circle circle;
+    Rectangle rectangle;
+
+    std::string ColouringShape(std::string c)
+    {
+        colour = c;
+        return colour;
+    }
+
+    void Draw() override
+    {
+        circle.Draw();
+        rectangle.Draw();
+        std::cout << "The colour of the shape is " << colour << "." << std::endl;
+    }
+};
+
+int main()
+{
+    ColouredShape colouredShape;
+    colouredShape.ColouringShape("Red");
+    colouredShape.Draw();
+}
