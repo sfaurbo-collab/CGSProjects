@@ -28,8 +28,6 @@ int main()
 
 		numbers.push_back(randomNum);
 	}
-			
-	//??? what is going on here
 
 	for (std::vector<int>::iterator it = numbers.begin(); it != numbers.end(); ++it)
 	{
