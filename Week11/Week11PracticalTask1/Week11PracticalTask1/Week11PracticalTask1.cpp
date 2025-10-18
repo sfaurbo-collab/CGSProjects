@@ -9,56 +9,80 @@
 //	 - A method to change states based on player input.
 // Allow the player to input commands to interact with the game and observe how the character’s behaviour changes based on the state.
 
-class Player
-{
-    std::string player;
-};
-
-class Input
-{
-public:
-    Input() 
-    {
-        int exploring = 0;
-        int fighting = 0;
-    };
-
-
-    
-};
-
 class PlayerState
 {
 public:
+    virtual void handleRequest() = 0;
+    virtual void transitionToNextState(class Player* state) = 0;
     virtual ~PlayerState() {}
-    virtual void handleInput(Player& player, Input input) {}
+};
+
+
+class Player
+{
+private:
+    PlayerState* currentState;
+public:
+    Player(PlayerState* initialState) : currentState(initialState) {}
+
+    void setState(PlayerState* newState)
+    {
+        delete currentState;
+        currentState = newState;
+    }
+
+    void request()
+    {
+        currentState->handleRequest();
+    }
+
+    void change()
+    {
+        currentState->transitionToNextState(this);
+    }
+
+    ~Player()
+    {
+        delete currentState;
+    }
+};
+
+class RestState : public PlayerState
+{
+public:
+    void handleRequest() override 
+    {
+        std::cout << "The player is resting." << std::endl;
+    }
+    void transitionToNextState(Player* state) override
+    {
+        state->setState(new ExploringState());
+    }
 };
 
 class ExploringState : public PlayerState
 {
 public:
-    ExploringState() {}
-
-    virtual void handleInput(Player& player, Input input)
+    void handleRequest() override 
     {
-        if (input == 1)
-        {
-            std::cout << "The player is exploring." << std::endl;
-        }
+        std::cout << "The player is exploring." << std::endl;
+    }
+    void transitionToNextState(Player* state) override
+    {
+        state->setState(new FightingState());
     }
 };
 
 class FightingState : public PlayerState
 {
 public:
-    FightingState() {}
-
-    virtual void handleInput(Player& player, Input input)
+    void handleRequest() override 
     {
-        if (input == 2)
-        {
-            std::cout << "The player is fighting." << std::endl;
-        }
+        std::cout << "The player is fighting." << std::endl;
+    }
+    void transitionToNextState(Player* state) override
+    {
+        state->setState(new RestState());
     }
 };
 
