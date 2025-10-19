@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 
 // Learn to apply the State Pattern to manage object behaviour based on internal state.
 // 
@@ -9,84 +8,73 @@
 //	 - A method to change states based on player input.
 // Allow the player to input commands to interact with the game and observe how the character’s behaviour changes based on the state.
 
-class PlayerState
+class Player;
+
+class State
 {
 public:
-    virtual void handleRequest() = 0;
-    virtual void transitionToNextState(class Player* state) = 0;
-    virtual ~PlayerState() {}
+    virtual void handleInput() = 0;
+    virtual ~State() = default;
 };
 
+class RestState : public State
+{
+public:
+    void handleInput() override
+    {
+        std::cout << "Player is resting." << std::endl;
+    }
+};
+
+class ExploringState : public State
+{
+public:
+    void handleInput() override
+    {
+        std::cout << "Player is exploring." << std::endl;
+    }
+};
+
+class FightingState : public State
+{
+public:
+    void handleInput() override
+    {
+        std::cout << "Player is fighting." << std::endl;
+    }
+};
 
 class Player
 {
 private:
-    PlayerState* currentState;
-public:
-    Player(PlayerState* initialState) : currentState(initialState) {}
+    State* currentState;
 
-    void setState(PlayerState* newState)
+public:
+    Player(State* initialState) : currentState(initialState) {}
+
+    void setState(State* newState)
     {
-        delete currentState;
         currentState = newState;
     }
 
-    void request()
+    void input()
     {
-        currentState->handleRequest();
-    }
-
-    void change()
-    {
-        currentState->transitionToNextState(this);
-    }
-
-    ~Player()
-    {
-        delete currentState;
-    }
-};
-
-class RestState : public PlayerState
-{
-public:
-    void handleRequest() override 
-    {
-        std::cout << "The player is resting." << std::endl;
-    }
-    void transitionToNextState(Player* state) override
-    {
-        state->setState(new ExploringState());
-    }
-};
-
-class ExploringState : public PlayerState
-{
-public:
-    void handleRequest() override 
-    {
-        std::cout << "The player is exploring." << std::endl;
-    }
-    void transitionToNextState(Player* state) override
-    {
-        state->setState(new FightingState());
-    }
-};
-
-class FightingState : public PlayerState
-{
-public:
-    void handleRequest() override 
-    {
-        std::cout << "The player is fighting." << std::endl;
-    }
-    void transitionToNextState(Player* state) override
-    {
-        state->setState(new RestState());
+        currentState->handleInput();
     }
 };
 
 int main()
 {
+    RestState rest;
+    ExploringState explore;
+    FightingState fight;
 
+    Player player(&rest);
+    player.input();
+    player.setState(&explore);
+    player.input();
+    player.setState(&fight);
+    player.input();
+    player.setState(&rest);
+    player.input();
 }
