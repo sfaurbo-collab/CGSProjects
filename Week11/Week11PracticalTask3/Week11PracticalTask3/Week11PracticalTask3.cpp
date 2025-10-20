@@ -80,5 +80,8 @@ public:
 
 int main()
 {
-    
+    CreateWarrior newWarrior;
+    Warrior warrior;
+    newWarrior.createCharacter();
+    warrior.type();
 }

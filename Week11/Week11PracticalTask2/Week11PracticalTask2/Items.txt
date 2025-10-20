@@ -1,0 +1,101 @@
+    Plate Armor
+    Studded Leather
+    Shield
+    Ring Mail
+    Leather
+    Splint Armor
+    Scale Mail
+    Chain Mail
+    Breastplate
+    Padded Armor
+    Great Axe
+    Javelin
+    Light Hammer
+    Rapier
+    Shortbow
+    Whip
+    Hand Crossbow
+    Quarterstaff
+    Flail
+    Sickle
+    Crowbar
+    Healers Kit
+    Hunting Trap
+    Waterskin
+    Torch
+    Fifty feet of Hemp Rope
+    Pouch
+    Daily Rations
+    Flask of Oil
+    Hourglass
+    Thieves Tools
+    Brewers Supplies
+    Drum
+    Herbalism Kit
+    Playing Cards
+    Painters Supplies
+    Navigators Tools
+    Flute
+    Disguise Kit
+    Carpenters Tools
+    Potion of Superior Healing
+    Potion of Stone Giant Strength
+    Potion of Mind Reading
+    Potion of Growth
+    Potion of Longevity
+    Potion of Invulnerability
+    Potion of Diminution
+    Potion of Flying
+    Elixir of Health
+    Potion of Supreme Healing
+    Ring of Evasion
+    Ring of Water Walking
+    Ring of Shooting Stars
+    Ring of Telekinesis
+    Ring of Warmth
+    Ring of Protection
+    Ring of Mind Shielding
+    Ring of the Ram
+    Ring of Djinni Summoning
+    Ring of Three Wishes
+    Scroll of Fireball
+    Scroll of Dispel Magic
+    Scroll of Counterspell
+    Scroll of Wall of Fire
+    Scroll of Mass Cure Wounds
+    Scroll of Chain Lightning
+    Scroll of Plane Shift
+    Scroll of Mind Blank
+    Scroll of Wish
+    Scroll of Mending
+    Eye of Vecna
+    Hand of Vecna
+    Axe of the Dwarvish Lords
+    Blackrazor
+    Book of Exalted Deeds
+    Orb of Dragonkind
+    Rod of Seven Parts
+    Sword of Kas
+    The Deck of Many Things
+    Wand of Orcus
+    Bag of Holding
+    Immovable Rod
+    Boots of Elvenkind
+    Cape of the Mountebank
+    Cloak of Protection
+    Decanter of Endless Water
+    Wand of Magic Missiles
+    Pearl of Power
+    Mithral Armor
+    Folding Boat
+    Amulet of Health
+    Broom of Flying
+    Flame Tongue
+    Hewards Handy Haversack
+    Staff of the Woodlands
+    Nolzurs Marvelous Pigments
+    Staff of Power
+    Amulet of the Planes
+    Defender
+    Ioun Stone
+};

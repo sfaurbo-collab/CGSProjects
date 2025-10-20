@@ -1,4 +1,6 @@
 #include <iostream>
+#include <list>
+#include <string>
 
 // Learn to implement the Singleton Pattern for managing global access to a single instance.
 // 
@@ -14,17 +16,53 @@
 class Inventory
 {
 public:
-    static Inventory& instance()
+    static Inventory* GetInventory()
     {
-        static Inventory* instance = new Inventory();
-        return *instance;
+        if (Instance == nullptr)
+        {
+            Instance = new Inventory;
+        }
+        
+        return Instance;
+    }
+
+    std::list<std::string> inventory;
+
+    void addItem(std::string a)
+    {
+        inventory.push_back(a);
+    }
+
+    void removeItem(std::string r)
+    {
+        inventory.remove(r);
+    }
+
+    void viewInventory()
+    {
+        for (std::list<std::string>::iterator itx = inventory.begin(); itx != inventory.end(); ++itx)
+        {
+            std::cout << *itx << std::endl;
+        }
     }
 
 private:
-    Inventory() {}
+    Inventory() {};
+
+    static Inventory* Instance;
 };
 
 int main()
 {
-
+    Inventory& GetInventory();
+    Inventory* playerInventory;
+    playerInventory->addItem("Splint Armor");
+    playerInventory->addItem("Fifty feet of Hemp Rope");
+    playerInventory->addItem("Potion of Stone Giant Strength");
+    playerInventory->addItem("Navigator's Tools");
+    playerInventory->addItem("Scroll of Wish");
+    playerInventory->addItem("Axe of the Dwarvish Lords");
+    playerInventory->viewInventory();
+    playerInventory->removeItem("Fifty feet of Hemp Rope");
+    playerInventory->viewInventory();
 }
