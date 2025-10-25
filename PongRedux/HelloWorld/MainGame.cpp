@@ -6,19 +6,20 @@ int DISPLAY_WIDTH = 1280;
 int DISPLAY_HEIGHT = 720;
 int DISPLAY_SCALE = 1;
 
-enum Agent8State //StateOfGame. --> look at this to reset when a score is made
+enum PlayState //StateOfGame. --> look at this to reset when a score is made
 {
 	STATE_APPEAR = 0,
 	STATE_HALT,
 	STATE_PLAY,
-	STATE_DEAD,
+	STATE_RESET_LEFT,
+	STATE_RESET_RIGHT,
 };
 
 struct GameState
 {
 	int scoreP1{ 0 };
 	int scoreP2{ 0 };
-	Agent8State agentState{ STATE_APPEAR };
+	PlayState pongState{ STATE_APPEAR };
 };
 
 GameState gameState;
@@ -26,13 +27,9 @@ GameState gameState;
 enum GameObjectType
 {
 	TYPE_NULL = -1,
-	TYPE_AGENT8,
-	TYPE_FAN,
 	TYPE_TOOL,
 	TYPE_COIN,
 	TYPE_STAR,
-	TYPE_LASER,
-	TYPE_DESTROYED,
 	TYPE_PADDLEL,
 	TYPE_PADDLER,
 	TYPE_BALL,
@@ -41,8 +38,7 @@ enum GameObjectType
 void HandlePlayerControls();
 void UpdateBall();
 void UpdateTools();
-void UpdateCoinsandStars();
-void UpdateAgent8();
+void UpdatePong();
 
 // The entry point for a PlayBuffer program
 void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
@@ -64,13 +60,14 @@ bool MainGameUpdate( float elapsedTime )
 	HandlePlayerControls();
 	UpdateBall();
 	UpdateTools();
-	UpdateCoinsandStars();
-	UpdateAgent8();
+	UpdatePong();
 	Play::DrawFontText("32px", "LEFT SIDE: W = UP, S = DOWN.                RIGHT SIDE: ARROW KEYS TO MOVE UP AND DOWN",
 		{ DISPLAY_WIDTH / 2, 40 }, Play::CENTRE);
-	Play::DrawFontText("32px", "Player 1 SCORE: " + std::to_string(gameState.scoreP1),
+	Play::DrawFontText("32px", "Press Space to Reset after someone scores.",
+		{ DISPLAY_WIDTH / 2, DISPLAY_HEIGHT - 40 }, Play::CENTRE);
+	Play::DrawFontText("64px", "SCORE: " + std::to_string(gameState.scoreP1),
 		{ 150, DISPLAY_HEIGHT - 40 }, Play::CENTRE);
-	Play::DrawFontText("32px", "Player 2 SCORE: " + std::to_string(gameState.scoreP2),
+	Play::DrawFontText("64px", "SCORE: " + std::to_string(gameState.scoreP2),
 		{ 1130, DISPLAY_HEIGHT - 40 }, Play::CENTRE);
 	Play::PresentDrawingBuffer();
 	return Play::KeyDown( KEY_ESCAPE );
@@ -85,7 +82,7 @@ int MainGameExit( void )
 
 void HandlePlayerControls()
 {
-		GameObject& obj_paddleL = Play::GetGameObjectByType(TYPE_PADDLEL);
+	GameObject& obj_paddleL = Play::GetGameObjectByType(TYPE_PADDLEL);
 	if (Play::KeyDown(Play::KEY_W))
 	{
 		obj_paddleL.velocity = { 0, 10 };
@@ -145,7 +142,7 @@ void UpdateBall()
 	GameObject& obj_paddleL = Play::GetGameObjectByType(TYPE_PADDLEL);
 	GameObject& obj_paddleR = Play::GetGameObjectByType(TYPE_PADDLER);
 
-	if (Play::RandomRoll(500) == 1)
+	if (Play::RandomRoll(1000) == 1)
 	{
 		int id = Play::CreateGameObject(TYPE_TOOL, obj_ball.pos, 50, "driver");
 		GameObject& obj_ball = Play::GetGameObject(id);
@@ -162,7 +159,7 @@ void UpdateBall()
 	}
 	Play::UpdateGameObject(obj_ball);
 
-	if (Play::RandomRoll(500) == 1)
+	if (Play::RandomRoll(1000) == 1)
 	{
 		int id = Play::CreateGameObject(TYPE_TOOL, obj_ball.pos, 50, "driver");
 		GameObject& obj_ball = Play::GetGameObject(id);
@@ -194,44 +191,62 @@ void UpdateBall()
 		
 		if (obj_ball.pos.x < minX)
 		{
-			gameState.scoreP1 += 1;
+			gameState.scoreP2 += 1;
 			obj_ball.velocity = { 0, 0 };
+			Play::StopAudio("music");
 		}
 		else if (obj_ball.pos.x > maxX)
 		{
-			gameState.scoreP2 += 1;
+			gameState.scoreP1 += 1;
 			obj_ball.velocity = { 0, 0 };
+			Play::StopAudio("music");
 		}
 	}
 	Play::DrawObjectRotated(obj_ball);
 
 	if (Play::IsColliding(obj_ball, obj_paddleL))
 	{
-		obj_ball.velocity = { -1, -1 };
+		if (obj_ball.velocity.y == -1)
+		{
+			obj_ball.velocity = { 1, -1 };
+		}
+		else if (obj_ball.velocity.y == 1)
+		{
+			obj_ball.velocity = { 1, 1 };
+		}
 	}
 	Play::UpdateGameObject(obj_ball);
 
 	if (Play::IsColliding(obj_ball, obj_paddleR))
 	{
-		obj_ball.velocity = { -1, -1 };
+		if (obj_ball.velocity.y == -1)
+		{
+			obj_ball.velocity = { -1, -1 };
+		}
+		else if (obj_ball.velocity.y == 1)
+		{
+			obj_ball.velocity = { -1, 1 };
+		}
 	}
 	Play::UpdateGameObject(obj_ball);
 }
 
 void UpdateTools()
 {
-	GameObject& obj_agent8 = Play::GetGameObjectByType(TYPE_AGENT8);
+	GameObject& obj_ball = Play::GetGameObjectByType(TYPE_BALL);
 	std::vector<int> vTools = Play::CollectGameObjectIDsByType(TYPE_TOOL);
 	
 	for (int id : vTools)
 	{
 		GameObject& obj_tool = Play::GetGameObject(id);
 		
-		if (gameState.agentState != STATE_DEAD && Play::IsColliding(obj_tool, obj_agent8))
+		if (gameState.pongState != STATE_RESET_LEFT && Play::IsColliding(obj_tool, obj_ball))
 		{
-			//Play::StopAudio("music");
-			//Play::PlayAudio("die");
-			gameState.agentState = STATE_DEAD;
+			gameState.pongState = STATE_RESET_LEFT;
+		}
+		if (gameState.pongState != STATE_RESET_RIGHT && Play::IsColliding(obj_tool, obj_ball))
+		{
+			gameState.pongState = STATE_RESET_RIGHT;
 		}
 		Play::UpdateGameObject(obj_tool);
 		
@@ -247,101 +262,54 @@ void UpdateTools()
 	}
 }
 
-void UpdateCoinsandStars()
+void UpdatePong()
 {
-	GameObject& obj_agent8 = Play::GetGameObjectByType(TYPE_AGENT8);
-	std::vector<int> vCoins = Play::CollectGameObjectIDsByType(TYPE_COIN);
-	
-	for (int id_coin : vCoins)
+	GameObject& obj_ball = Play::GetGameObjectByType(TYPE_BALL);
+
+	switch (gameState.pongState)
 	{
-		GameObject& obj_coin = Play::GetGameObject(id_coin);
-		bool hasCollided = false;
-		
-		if (Play::IsColliding(obj_coin, obj_agent8))
-		{
-			for (float rad{ 0.25f }; rad < 2.0f; rad += 0.5f)
-			{
-				int id = Play::CreateGameObject(TYPE_STAR, obj_agent8.pos, 0, "star");
-				GameObject& obj_star = Play::GetGameObject(id);
-				obj_star.rotSpeed = 0.1f;
-				obj_star.acceleration = { 0.0f, -0.5f };
-				Play::SetGameObjectDirection(obj_star, 16, rad * PLAY_PI);
-			}
-			
-			hasCollided = true;
-			gameState.scoreP1 += 500;
-			Play::PlayAudio("collect");
-		}
-
-		Play::UpdateGameObject(obj_coin);
-		Play::DrawObjectRotated(obj_coin);
-		
-		if (!Play::IsVisible(obj_coin) || hasCollided)
-			Play::DestroyGameObject(id_coin);
-	}
-
-	std::vector<int> vStars = Play::CollectGameObjectIDsByType(TYPE_STAR);
-	
-	for (int id_star : vStars)
-	{
-		GameObject& obj_star = Play::GetGameObject(id_star);
-		
-		Play::UpdateGameObject(obj_star);
-		Play::DrawObjectRotated(obj_star);
-		
-		if (!Play::IsVisible(obj_star))
-			Play::DestroyGameObject(id_star);
-	}
-}
-
-void UpdateAgent8()
-{
-	GameObject& obj_agent8 = Play::GetGameObjectByType(TYPE_AGENT8);
-
-	switch (gameState.agentState)
-	{
-	case STATE_APPEAR:
-		obj_agent8.velocity = { 0, -12 };
-		obj_agent8.acceleration = { 0, -0.5f };
-		Play::SetSprite(obj_agent8, "agent8_fall", 0);
-		obj_agent8.rotation = 0;
-		if (obj_agent8.pos.y <= DISPLAY_HEIGHT * 0.66f)
-			gameState.agentState = STATE_PLAY;
-		break;
-
-	case STATE_HALT:
-		obj_agent8.velocity *= 0.9f;
-		if (Play::IsAnimationComplete(obj_agent8))
-			gameState.agentState = STATE_PLAY;
-		break;
-
 	case STATE_PLAY:
 		HandlePlayerControls();
 		break;
 
-	case STATE_DEAD:
-		obj_agent8.acceleration = { -0.3f, 0.5f };
-		obj_agent8.rotation += 0.25f;
+	case STATE_RESET_LEFT:
 		if (Play::KeyPressed(Play::KEY_SPACE) == true)
 		{
-			gameState.agentState = STATE_APPEAR;
-			obj_agent8.pos = { 115, 600 };
-			obj_agent8.velocity = { 0, 0 };
-			obj_agent8.frame = 0;
+			obj_ball.pos = { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2 };
+			obj_ball.frame = 0;
+			Play::StopAudio("music");
 			Play::StartAudioLoop("music");
-			//gameState.score = 0;
+			if (gameState.scoreP1 > gameState.scoreP2)
+			{
+				obj_ball.velocity = { 1, 1 };
+			}
+			else
+			{
+				obj_ball.velocity = { -1, -1 };
+			}
+		}
+		break;
 
-			for (int id_obj : Play::CollectGameObjectIDsByType(TYPE_TOOL))
-				Play::GetGameObject(id_obj).type = TYPE_DESTROYED;
+	case STATE_RESET_RIGHT:
+		if (Play::KeyPressed(Play::KEY_SPACE) == true)
+		{
+			obj_ball.pos = { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2 };
+			obj_ball.frame = 0;
+			Play::StopAudio("music");
+			Play::StartAudioLoop("music");
+			if (gameState.scoreP2 > gameState.scoreP1)
+			{
+				obj_ball.velocity = { -1, -1 };
+			}
+			else
+			{
+				obj_ball.velocity = { 1, 1 };
+			}
 		}
 		break;
 	}
 
-	Play::UpdateGameObject(obj_agent8);
+	Play::UpdateGameObject(obj_ball);
 
-	if (Play::IsLeavingDisplayArea(obj_agent8) && gameState.agentState != STATE_DEAD)
-		obj_agent8.pos = obj_agent8.oldPos;
-
-	Play::DrawLine({ obj_agent8.pos.x, 720 }, obj_agent8.pos, Play::cWhite);
-	Play::DrawObjectRotated(obj_agent8);
+	Play::DrawObjectRotated(obj_ball);
 }
