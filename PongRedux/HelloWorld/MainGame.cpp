@@ -13,6 +13,7 @@ enum PlayState //StateOfGame. --> look at this to reset when a score is made
 	STATE_PLAY,
 	STATE_RESET_LEFT,
 	STATE_RESET_RIGHT,
+	STATE_GAME_END,
 };
 
 struct GameState
@@ -47,9 +48,9 @@ void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 	Play::CentreAllSpriteOrigins();
 	Play::LoadBackground("Data\\Backgrounds\\background.png");
 	Play::StartAudioLoop("music");
-	Play::CreateGameObject(TYPE_PADDLEL, { 100, DISPLAY_HEIGHT / 2 }, 50, "PaddleL");
-	Play::CreateGameObject(TYPE_PADDLER, { 1180, DISPLAY_HEIGHT / 2 }, 50, "PaddleR");
-	int id_ball = Play::CreateGameObject(TYPE_BALL, { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2 }, 50, "ball");
+	Play::CreateGameObject(TYPE_PADDLEL, { 100, DISPLAY_HEIGHT / 2 }, 100, "PaddleL");
+	Play::CreateGameObject(TYPE_PADDLER, { 1180, DISPLAY_HEIGHT / 2 }, 100, "PaddleR");
+	int id_ball = Play::CreateGameObject(TYPE_BALL, { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2 }, 25, "ball");
 	Play::GetGameObject(id_ball).velocity = { 1, 1 };
 }
 
@@ -61,10 +62,12 @@ bool MainGameUpdate( float elapsedTime )
 	UpdateBall();
 	UpdateTools();
 	UpdatePong();
-	Play::DrawFontText("32px", "LEFT SIDE: W = UP, S = DOWN.                RIGHT SIDE: ARROW KEYS TO MOVE UP AND DOWN",
+	Play::DrawFontText("32px", "W = UP, S = DOWN",
+		{ 40, 40 }, Play::LEFT);
+	Play::DrawFontText("32px", "ARROW KEYS TO MOVE UP AND DOWN",
+		{ 1240, 40 }, Play::RIGHT);
+	Play::DrawFontText("32px", "Space=Reset. Esc=Exit.",
 		{ DISPLAY_WIDTH / 2, 40 }, Play::CENTRE);
-	Play::DrawFontText("32px", "Press Space to Reset after someone scores.",
-		{ DISPLAY_WIDTH / 2, DISPLAY_HEIGHT - 40 }, Play::CENTRE);
 	Play::DrawFontText("64px", "SCORE: " + std::to_string(gameState.scoreP1),
 		{ 150, DISPLAY_HEIGHT - 40 }, Play::CENTRE);
 	Play::DrawFontText("64px", "SCORE: " + std::to_string(gameState.scoreP2),
@@ -141,6 +144,7 @@ void UpdateBall()
 	GameObject& obj_ball = Play::GetGameObjectByType(TYPE_BALL);
 	GameObject& obj_paddleL = Play::GetGameObjectByType(TYPE_PADDLEL);
 	GameObject& obj_paddleR = Play::GetGameObjectByType(TYPE_PADDLER);
+	int maxScore = 7;
 
 	if (Play::RandomRoll(1000) == 1)
 	{
@@ -193,13 +197,15 @@ void UpdateBall()
 		{
 			gameState.scoreP2 += 1;
 			obj_ball.velocity = { 0, 0 };
-			Play::StopAudio("music");
+			Play::PlayAudio("score");
+			gameState.pongState = STATE_RESET_LEFT;
 		}
 		else if (obj_ball.pos.x > maxX)
 		{
 			gameState.scoreP1 += 1;
 			obj_ball.velocity = { 0, 0 };
-			Play::StopAudio("music");
+			Play::PlayAudio("score");
+			gameState.pongState = STATE_RESET_RIGHT;
 		}
 	}
 	Play::DrawObjectRotated(obj_ball);
@@ -229,6 +235,21 @@ void UpdateBall()
 		}
 	}
 	Play::UpdateGameObject(obj_ball);
+
+	if (gameState.scoreP1 >= 2/*maxScore*/)
+	{
+		Play::StopAudio("music");
+		Play::PlayAudio("gameover");
+		gameState.pongState = STATE_GAME_END;
+	}
+	else if (gameState.scoreP2 >= 2/*maxScore*/)
+	{
+		Play::StopAudio("music");
+		Play::PlayAudio("gameover"); 
+		gameState.pongState = STATE_GAME_END;
+	}
+	Play::UpdateGameObject(obj_ball);
+	
 }
 
 void UpdateTools()
@@ -240,14 +261,6 @@ void UpdateTools()
 	{
 		GameObject& obj_tool = Play::GetGameObject(id);
 		
-		if (gameState.pongState != STATE_RESET_LEFT && Play::IsColliding(obj_tool, obj_ball))
-		{
-			gameState.pongState = STATE_RESET_LEFT;
-		}
-		if (gameState.pongState != STATE_RESET_RIGHT && Play::IsColliding(obj_tool, obj_ball))
-		{
-			gameState.pongState = STATE_RESET_RIGHT;
-		}
 		Play::UpdateGameObject(obj_tool);
 		
 		if (Play::IsLeavingDisplayArea(obj_tool, Play::VERTICAL))
@@ -277,8 +290,6 @@ void UpdatePong()
 		{
 			obj_ball.pos = { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2 };
 			obj_ball.frame = 0;
-			Play::StopAudio("music");
-			Play::StartAudioLoop("music");
 			if (gameState.scoreP1 > gameState.scoreP2)
 			{
 				obj_ball.velocity = { 1, 1 };
@@ -287,6 +298,7 @@ void UpdatePong()
 			{
 				obj_ball.velocity = { -1, -1 };
 			}
+			gameState.pongState = STATE_PLAY;
 		}
 		break;
 
@@ -295,8 +307,6 @@ void UpdatePong()
 		{
 			obj_ball.pos = { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2 };
 			obj_ball.frame = 0;
-			Play::StopAudio("music");
-			Play::StartAudioLoop("music");
 			if (gameState.scoreP2 > gameState.scoreP1)
 			{
 				obj_ball.velocity = { -1, -1 };
@@ -305,6 +315,24 @@ void UpdatePong()
 			{
 				obj_ball.velocity = { 1, 1 };
 			}
+			gameState.pongState = STATE_PLAY;
+		}
+		break;
+	
+	case STATE_GAME_END:
+		Play::DrawFontText("64px", "GAME OVER", { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2 }, Play::CENTRE);
+		Play::DrawFontText("64px", "Press SPACE to reset", { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 3 }, Play::CENTRE);
+		
+		if (Play::KeyPressed(Play::KEY_SPACE) == true)
+		{
+			gameState.scoreP1 = 0;
+			gameState.scoreP2 = 0;
+			obj_ball.pos = { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2 };
+			obj_ball.frame = 0;
+			obj_ball.velocity = { 1, 1 };
+			Play::StopAudio("gameover");
+			Play::StartAudioLoop("music");
+			gameState.pongState = STATE_PLAY;
 		}
 		break;
 	}
